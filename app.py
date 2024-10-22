@@ -9,7 +9,7 @@ from io import StringIO
 import requests
 
 # MongoDB connection setup
-client = MongoClient("mongodb://127.0.0.1:27017/")
+client = MongoClient("mongodb://127.0.0.1:27017/", serverSelectionTimeoutMS=5000)  # Timeout after 5 seconds
 db = client["movie_reviews_db"]
 reviews_collection = db["reviews"]
 
