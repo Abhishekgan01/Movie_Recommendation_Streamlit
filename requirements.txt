@@ -1,0 +1,6 @@
+streamlit
+pymongo
+textblob
+matplotlib
+pandas
+requests
