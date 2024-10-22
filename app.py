@@ -6,11 +6,16 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import csv
 from io import StringIO
+import requests
 
 # MongoDB connection setup
 client = MongoClient("mongodb://localhost:27017/")
 db = client["movie_reviews_db"]
 reviews_collection = db["reviews"]
+
+# TMDb API setup
+TMDB_API_KEY = "YOUR_TMDB_API_KEY"  # Replace with your TMDb API key
+TMDB_BASE_URL = "https://api.themoviedb.org/3"
 
 # Function to analyze sentiment
 def analyze_sentiment(review_text):
@@ -22,6 +27,26 @@ def analyze_sentiment(review_text):
         return "Negative"
     else:
         return "Neutral"
+
+# Function to get movie recommendations
+def get_movie_recommendations(movie_title):
+    search_url = f"{TMDB_BASE_URL}/search/movie"
+    params = {
+        "api_key": TMDB_API_KEY,
+        "query": movie_title
+    }
+    response = requests.get(search_url, params=params)
+    results = response.json().get("results", [])
+
+    recommendations = []
+    if results:
+        # Get the first search result's ID for recommendations
+        movie_id = results[0]["id"]
+        recommendations_url = f"{TMDB_BASE_URL}/movie/{movie_id}/recommendations"
+        recommendations_response = requests.get(recommendations_url, params={"api_key": TMDB_API_KEY})
+        recommendations = recommendations_response.json().get("results", [])
+    
+    return recommendations
 
 # Streamlit UI
 st.title("Movie Review Submission")
@@ -58,6 +83,20 @@ if st.button("Submit"):
         }
         reviews_collection.insert_one(review_data)
         st.success("Review submitted successfully!")
+
+        # Get movie recommendations
+        recommendations = get_movie_recommendations(movie_title)
+
+        if recommendations:
+            st.header("Recommended Movies")
+            for movie in recommendations:
+                st.subheader(movie["title"])
+                st.write(f"Release Date: {movie['release_date']}")
+                st.write(f"Overview: {movie['overview']}")
+                st.write(f"[More Info](https://www.themoviedb.org/movie/{movie['id']})")
+                st.write("---")
+        else:
+            st.warning("No recommendations found.")
 
         # Optionally, clear the inputs after submission
         st.session_state.username = ''
