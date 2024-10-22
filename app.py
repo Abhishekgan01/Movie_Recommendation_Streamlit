@@ -7,9 +7,11 @@ import pandas as pd
 import csv
 from io import StringIO
 import requests
+import os
+from dotenv import load_dotenv
 
 # MongoDB connection setup
-client = MongoClient("mongodb://127.0.0.1:27017/", serverSelectionTimeoutMS=5000)  # Timeout after 5 seconds
+client = MongoClient(os.getenv("MONGO_URI"))
 db = client["movie_reviews_db"]
 reviews_collection = db["reviews"]
 
