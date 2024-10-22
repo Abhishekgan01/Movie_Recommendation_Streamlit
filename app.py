@@ -14,7 +14,7 @@ db = client["movie_reviews_db"]
 reviews_collection = db["reviews"]
 
 # TMDb API setup
-TMDB_API_KEY = "YOUR_TMDB_API_KEY"  # Replace with your TMDb API key
+TMDB_API_KEY = "fb60ea478c32856c45015ed39cbd23c0"  # Replace with your TMDb API key
 TMDB_BASE_URL = "https://api.themoviedb.org/3"
 
 # Function to analyze sentiment
