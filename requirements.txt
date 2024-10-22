@@ -4,3 +4,4 @@ textblob
 matplotlib
 pandas
 requests
+python-dotenv
